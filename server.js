@@ -5,7 +5,14 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 const app = express();
-app.use(cors());
+
+// Configure CORS to only allow your frontend
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
+
 app.use(express.json());
 
 const razorpay = new Razorpay({
@@ -46,6 +53,11 @@ app.post('/create-order', async (req, res) => {
       }
     });
   }
+});
+
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.json({ status: 'Server is running' });
 });
 
 const PORT = process.env.PORT || 5000;
